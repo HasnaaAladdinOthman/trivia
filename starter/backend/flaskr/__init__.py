@@ -215,10 +215,10 @@ def create_app(test_config=None):
       current_question = questions_per_said_category[random.randrange(
                 0, len(questions_per_said_category))].format() if len(questions_per_said_category) > 0 else None
       
-      if (len(previous_questions_ids) == total):
+      '''if (len(previous_questions_ids) == total):
         return jsonify({
           'success': True
-        })
+        })'''
 
       return jsonify({
         'success' : True,
@@ -261,5 +261,3 @@ def create_app(test_config=None):
     }),405
 
   return app
-
-    
