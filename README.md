@@ -436,5 +436,5 @@ This API uses 3 types of error types when requests fail:
     
   }`
 ###
-## Authors
+## Author
 ### Hasnaa Aladdin
