@@ -34,21 +34,21 @@ class TriviaTestCase(unittest.TestCase):
     Write at least one test for each test for successful operation and for expected errors.
     """
     def test_get_paginated_questions(self):
-        res=self.client().get('/')
+        res=self.client().get('/questions')
         data=json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'],True)
-        self.assertTrue(len(data['Questions']))
-        self.assertTrue(len(data['Categories']))
-        self.assertTrue(data['No. of total Questions'])
+        self.assertTrue(len(data['questions']))
+        self.assertTrue(len(data['categories']))
+        self.assertTrue(data['total_questions'])
         #self.assertEqual(data['current_category'],None)
         #self.assertTrue(data['NO of questions per page'])
 
         
     
     def test_404_requesting_invalid_page(self):
-        res=self.client().get('/?page=1000')
+        res=self.client().get('/questions?page=1000')
         data=json.loads(res.data)
 
         self.assertEqual(res.status_code,404)
@@ -62,12 +62,12 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code,200)
         self.assertEqual(data['success'],True)
-        self.assertTrue(len(data['Categories']))
+        self.assertTrue(len(data['categories']))
         #self.assertTrue(data['No of categories'])
  
 
     def test_get_categories_with_wrong_method(self):
-        res=self.client().post('/categories',json={"Category":"4"})
+        res=self.client().post('/categories', json={"category":"4"})
         data=json.loads(res.data)
 
         self.assertEqual(res.status_code, 405)
@@ -100,7 +100,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'],True)
         self.assertTrue(len(data['questions']))
         self.assertTrue(data['total_questions'])
-        self.assertEqual(data['category'],6)
+        self.assertEqual(data['current_category'],6)
 
 
     def test_get_questions_per_category_with_wrong_method(self):
@@ -114,7 +114,7 @@ class TriviaTestCase(unittest.TestCase):
 
 
     def test_search_specific_question(self):
-        res=self.client().post('/search?search_term=who')
+        res=self.client().post('/search', json={"searchTerm":"who"})
         data=json.loads(res.data)
 
         self.assertEqual(res.status_code,200)
@@ -124,7 +124,7 @@ class TriviaTestCase(unittest.TestCase):
 
 
     def test_search_specefic_questions_with_wrong_method(self):
-        res=self.client().get('/search?search_term=who')
+        res=self.client().get('/search')
         data=json.loads(res.data)
 
         self.assertEqual(res.status_code, 405)
