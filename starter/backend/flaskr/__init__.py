@@ -99,14 +99,15 @@ def create_app(test_config=None):
     @app.route('/<id>', methods=['DELETE'])
     def delete_question(id):
         try:
-            Question.query.filter_by(id == id).delete()
+            Question.query.filter(Question.id == id).one_or_none().delete()
 
             return jsonify({
                 'success': True,
-                'questionID': id
+                'deleted': id
             })
         except Exception as error:
             db.session.rollback()
+            print("question hasn't been deleted")
             abort(404)
         finally:
             db.session.close()
@@ -207,11 +208,12 @@ def create_app(test_config=None):
                 abort(422)
             category = body.get('quiz_category', None)
             previous_questions_ids = body.get('previous_questions', None)
+
             if ((category is None) or (previous_questions_ids is None)):
                 abort(400)
 
             if category['type'] == 'click':
-                questions_per_said_category = Question.queryfilter(
+                questions_per_said_category = Question.query.filter(
                   Question.id.notin_((previous_questions_ids))).all()
             else:
                 questions_per_said_category = Question.query.filter(
@@ -219,6 +221,12 @@ def create_app(test_config=None):
                   Question.id.notin_((previous_questions_ids))).all()
             '''if (len(previous_questions_ids) == 0):
                   total = len(questions_per_said_category)'''
+
+            if (len(questions_per_said_category) == 0):
+                    return jsonify({
+                            'success': True,
+                            'question': False,
+                    })
 
             current_question = questions_per_said_category[random.randrange(
                 0, len(questions_per_said_category))].format()if len(
@@ -228,6 +236,7 @@ def create_app(test_config=None):
                       'success': True
                   })'''
 
+            print("questions_per_said_category",questions_per_said_category)
             return jsonify({
                 'success': True,
                 'question': current_question,
